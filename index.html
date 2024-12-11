@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Fingerprint Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #fingerprint {
+            word-wrap: break-word;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Browser Fingerprint Demo</h1>
+    <button onclick="generateFingerprint()">Generate Fingerprint</button>
+    <div id="fingerprint">Click the button to generate your browser fingerprint...</div>
+
+    <script type="module">
+        import { BrowserFingerprint } from './browserfingerprint.js';
+
+        // Define the function first
+        async function generateFingerprint() {
+            const fingerprinter = new BrowserFingerprint({
+                requireConsent: true,
+                logger: console
+            });
+
+            const fingerprint = await fingerprinter.generateFingerprint();
+            
+            if (fingerprint) {
+                document.getElementById('fingerprint').innerHTML = `
+                    <strong>Your browser fingerprint:</strong><br>
+                    ${fingerprint}<br><br>
+                    <strong>Raw Data:</strong><br>
+                    <pre>${JSON.stringify(fingerprinter.data, null, 2)}</pre>
+                `;
+            } else {
+                document.getElementById('fingerprint').innerHTML = 
+                    'Fingerprint generation failed or was denied.';
+            }
+        }
+
+        // Then make it available globally
+        window.generateFingerprint = generateFingerprint;
+    </script>
+</body>
+</html>
